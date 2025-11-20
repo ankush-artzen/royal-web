@@ -1,0 +1,32 @@
+@import "tailwindcss";
+
+
+:root {
+  --primary: #1100d7;
+  --secondary: #e2e2d5;
+}
+
+@theme {
+  --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
+}
+/* In your global.css or tailwind.css */
+/* Hide white background and shadow from react-toastify container */
+.Toastify__toast,
+.Toastify__toast-container,
+.Toastify__toast-body {
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+/* Optional: Remove extra padding that causes white margins */
+.Toastify__toast {
+  padding: 0 !important;
+  min-height: auto !important;
+}
+
+/* Optional: Prevent progress bar from showing (it has white base sometimes) */
+.Toastify__progress-bar {
+  background: white !important;
+}

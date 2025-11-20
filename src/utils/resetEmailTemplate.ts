@@ -1,0 +1,133 @@
+export function getResetEmailTemplate(resetLink: string, year: number) {
+  return `
+    <div style="
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      max-width: 600px;
+      margin: 0 auto;
+      background: #ffffff;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    ">
+      <!-- Header -->
+      <div style="
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 32px;
+        text-align: center;
+        color: white;
+      ">
+        <h1 style="margin: 0; font-size: 28px; font-weight: 600;">Royal Portal</h1>
+        <p style="margin: 8px 0 0 0; opacity: 0.9; font-size: 16px;">Password Reset</p>
+      </div>
+
+      <!-- Content -->
+      <div style="padding: 40px 32px;">
+        <h2 style="
+          margin: 0 0 24px 0;
+          color: #2d3748;
+          font-size: 24px;
+          font-weight: 600;
+          text-align: center;
+        ">
+          Reset Your Password
+        </h2>
+        
+        <p style="
+          margin: 0 0 20px 0;
+          color: #4a5568;
+          font-size: 16px;
+          line-height: 1.6;
+        ">
+          Hello,
+        </p>
+        
+        <p style="
+          margin: 0 0 24px 0;
+          color: #4a5568;
+          font-size: 16px;
+          line-height: 1.6;
+        ">
+          We received a request to reset your Royal Portal password. Click the button below to create a new password:
+        </p>
+
+        <!-- CTA Button -->
+        <div style="text-align: center; margin: 32px 0;">
+          <a href="${resetLink}" target="_blank" style="
+            display: inline-block;
+            padding: 16px 32px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 16px;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+            transition: all 0.3s ease;
+          " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 16px rgba(102, 126, 234, 0.4)';" 
+             onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(102, 126, 234, 0.3)';">
+            Reset Password
+          </a>
+        </div>
+
+        <!-- Expiry Notice -->
+        <div style="
+          background: #f7fafc;
+          padding: 16px;
+          border-radius: 8px;
+          border-left: 4px solid #e53e3e;
+          margin: 24px 0;
+        ">
+          <p style="
+            margin: 0;
+            color: #e53e3e;
+            font-size: 14px;
+            font-weight: 500;
+          ">
+            ⏰ This link will expire in 15 minutes
+          </p>
+        </div>
+
+        <!-- Security Notice -->
+        <div style="
+          background: #f0fff4;
+          padding: 16px;
+          border-radius: 8px;
+          border-left: 4px solid #38a169;
+          margin: 24px 0;
+        ">
+          <p style="
+            margin: 0;
+            color: #2d3748;
+            font-size: 14px;
+            line-height: 1.5;
+          ">
+            <strong>Didn't request this?</strong> If you didn't request a password reset, you can safely ignore this email. Your account remains secure.
+          </p>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div style="
+        background: #f7fafc;
+        padding: 24px 32px;
+        text-align: center;
+        border-top: 1px solid #e2e8f0;
+      ">
+        <p style="
+          margin: 0 0 8px 0;
+          color: #718096;
+          font-size: 14px;
+        ">
+          Need help? Contact our support team
+        </p>
+        <p style="
+          margin: 0;
+          color: #a0aec0;
+          font-size: 12px;
+        ">
+          © ${year} Royal Portal. All rights reserved.
+        </p>
+      </div>
+    </div>
+  `;
+}

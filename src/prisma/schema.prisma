@@ -1,0 +1,235 @@
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-1.1.x", "debian-openssl-3.0.x"]
+}
+
+model Session {
+  id               String            @id @map("_id")
+  accessToken      String? 
+  expires          DateTime?
+  isOnline         Boolean
+  scope            String?
+  shop             String
+  state            String
+  apiKey           String
+  onlineAccessInfo OnlineAccessInfo?
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+}
+
+model OnlineAccessInfo {
+  id                  String          @id @default(auto()) @map("_id") @db.ObjectId
+  session             Session?        @relation(fields: [sessionId], references: [id])
+  sessionId           String?         @unique
+  expiresIn           Int
+  associatedUserScope String
+  associatedUser      AssociatedUser?
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+}
+
+model AssociatedUser {
+  id                 String            @id @default(auto()) @map("_id") @db.ObjectId
+  onlineAccessInfo   OnlineAccessInfo? @relation(fields: [onlineAccessInfoId], references: [id])
+  onlineAccessInfoId String?           @unique
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+  userId             BigInt
+  firstName          String
+  lastName           String
+  email              String
+  accountOwner       Boolean
+  locale             String
+  collaborator       Boolean
+  emailVerified      Boolean
+}
+
+model StoreSetting {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  isActive  Boolean
+  shop      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Designer {
+  id                  String          @id @default(auto()) @map("_id") @db.ObjectId
+  name                String
+  email               String          @unique
+  royalties           ProductRoyalty[]
+}
+
+model DesignerAccount {
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  name            String
+  email           String   @unique
+  accountId       String   @unique
+  country         String
+  currency        String
+  payoutsEnabled  Boolean @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  royalId         String   @unique
+
+  requests WithdrawRequest[]
+
+  @@map("designerAccounts")
+}
+model PaymentMethod {
+  id               String   @id @default(auto()) @map("_id") @db.ObjectId
+  stripeCustomerId String
+  paymentMethodId  String
+  cardBrand        String?
+  last4            String?
+  expMonth         Int?
+  expYear          Int?
+  isDefault        Boolean  @default(false)
+
+  @@map("paymentMethods")
+}
+
+
+model ProductRoyalty {
+  id                  String    @id @default(auto()) @map("_id") @db.ObjectId
+  productId           String
+  shopifyId           String
+  title               String
+  image               String?
+  status              String?
+  inArchive           Boolean?
+  designerId          String
+  royality            Float?
+  shop                String?
+  totalSold           Int       @default(0)
+  totalRoyaltyEarned  Json?     
+  designer            Designer  @relation(fields: [designerId], references: [id])
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+  price           Json?     @default("{\"amount\":0,\"currency\":\"\",\"storeCurrency\":\"\",\"storeAmount\":0}")
+
+  @@unique([productId, designerId])
+}
+
+enum NotificationType {
+  royalty_assigned
+  royalty_order
+  royalty_transaction
+  royalty_withdrawal
+}
+
+model Notification {
+  id             String           @id @default(auto()) @map("_id") @db.ObjectId
+  type           NotificationType 
+  message        String
+  shop           String?          
+  designerId     String            
+  isRead         Boolean          @default(false)
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+}
+
+
+model RoyaltyOrder {
+  id             String      @id @default(auto()) @map("_id") @db.ObjectId
+  shop           String
+  orderId        String
+  orderName      String
+  calculatedRoyaltyAmount Float ?
+  lineItem       LineItem[]
+  currency       String?
+  convertedCurrencyAmountRoyality         Float?  
+  orderProductTotalAmount    Float?     
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+
+
+  @@unique([shop, orderId], name: "shop_orderId")
+}
+
+
+type LineItem {
+  productId        String
+  title            String
+  variantId        String
+  variantTitle     String?
+  designerId       String
+  productRoyaltyAmount          Float?
+  quantity         Int
+  unitPrice        Float
+  royaltyPercentage  Float
+}
+
+model RoyaltySubscription {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  shop         String   @unique
+  chargeId     String
+  planName     String
+  cappedAmount Float?
+  currency     String?
+  status       String
+  test         Boolean
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model RoyaltyTransaction {
+  id                         String   @id @default(auto()) @map("_id") @db.ObjectId
+  shop                       String   
+  shopifyTransactionChargeId String
+  orderId                    String
+  orderName                  String?
+  productId                  String?  
+  description                String
+  price                      Json  
+  currency                   String 
+  status                     String?
+  balanceUsed                Float?   
+  balanceRemaining           Float?   
+  royaltyPercentage          Float?     
+  designerId                 String?
+  createdAt                  DateTime @default(now())
+  updatedAt                  DateTime @updatedAt
+
+  @@unique([shop, orderId, productId,shopifyTransactionChargeId,designerId], name: "shop_orderId_productId_shopifyTransactionChargeId_designerId")
+}
+
+model user{
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  royalId      String   @unique
+  email        String   @unique
+  phoneNumber  String   @unique
+  password     String 
+  createdAt    DateTime @default(now())
+  resetToken        String?
+  resetTokenExpiry  DateTime?
+}
+
+model WithdrawRequest {
+  id                  String   @id @default(auto()) @map("_id") @db.ObjectId
+  designerId          String   
+  totalAmount         Float
+  fees                Float
+  depositAmount       Float
+  currency            String   @default("USD") 
+  status              WithdrawalStatus @default(PENDING)
+  requestedAt         DateTime @default(now())
+  notes                String?
+  description          String?
+  stripeTransferId     String?
+  designerAccounts      DesignerAccount     @relation(fields: [designerId], references: [royalId])
+  createdAt            DateTime    @default(now())
+  updatedAt            DateTime    @updatedAt
+}
+
+/// Enum for request status
+enum WithdrawalStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  PAID
+}

@@ -1,0 +1,12 @@
+<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    .cls-1 { fill: #0000FF; }
+    .cls-2 { font-family: Arial, sans-serif; font-weight: bold; font-size: 8px; fill: white; }
+  </style>
+
+  <path class="cls-1" d="M3 3H13L11 0L8 2L5 0L3 3Z"/>
+
+  <path class="cls-1" d="M14 14L8 16L2 14V3H14V14Z"/>
+
+  <text x="5.5" y="10.5" class="cls-2">R</text>
+</svg>
